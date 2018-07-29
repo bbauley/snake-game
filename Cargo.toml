@@ -1,10 +1,10 @@
 [package]
-name = "snake-game"
+name = "snake"
 version = "0.1.0"
 authors = ["Brandon Bauley <bbauley@pdx.edu>"]
 
 [[bin]]
-name = "snake-game"
+name = "snake"
 
 [dependencies]
 piston = "0.37.0"
