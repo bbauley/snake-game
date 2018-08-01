@@ -1,4 +1,4 @@
-use graphics::{ Context, polygon, Transformed };
+use graphics::{ Context, polygon, rectangle, Transformed };
 use opengl_graphics::GlGraphics;
 use piston::window::Size;
 
@@ -31,7 +31,7 @@ impl GameObject for Player {
 
   fn render(&self, ctxt: &Context, gl: &mut GlGraphics) {
     //TODO: Change this to be a ellipse
-    let shape = polygon::Polygon::new(color::WHITE);
+    let shape = rectangle::Rectangle::new_round(color::WHITE, 10.0);
     let dir = match self.dir {
       Direction::WEST => 0.0,
       Direction::NORTH => 90.0,
@@ -43,20 +43,15 @@ impl GameObject for Player {
     let transform = ctxt.transform
       .trans(self.pos.x, self.pos.y)
       .rot_deg(dir)
-      .trans(-radius, -radius);
-
-    let points = [
-      [0.0, radius],
-      [self.size, self.size],
-      [self.size, 0.0]
-    ];
+      .trans(-self.size - radius, -self.size - radius);
+    let points = [self.size; 4];
 
     shape.draw(
-      &points,
+      points,
       &ctxt.draw_state,
       transform,
       gl
-    );  
+    ); 
   }
   fn update(&mut self, _dt: f64, _size: Size) {
     //TODO: Figure out what to do here

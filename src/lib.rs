@@ -45,6 +45,15 @@ impl App {
   }
 
   pub fn update(&mut self, args: &UpdateArgs) {
+    //Constant fast movement 
+    for _ in 0..2 {
+      match self.player.dir {
+        NORTH => self.player.pos.y -= UNIT_MOVE,
+        WEST => self.player.pos.x -= UNIT_MOVE,
+        SOUTH => self.player.pos.y += UNIT_MOVE,
+        EAST => self.player.pos.x += UNIT_MOVE
+      }
+    }
     //TODO: Figure out what to do here 
     let size = self.window.settings.size();
     self.player.update(args.dt, size);
