@@ -15,7 +15,6 @@ mod models;
 use models::{ GameObject };
 use models::player::Player;
 
-const UNIT_MOVE: f64 = 1.0;
 
 pub struct App {
     pub window: config::GraphicsConfig,
@@ -45,39 +44,18 @@ impl App {
   }
 
   pub fn update(&mut self, args: &UpdateArgs) {
-    //Constant fast movement 
-    for _ in 0..2 {
-      match self.player.dir {
-        NORTH => self.player.pos.y -= UNIT_MOVE,
-        WEST => self.player.pos.x -= UNIT_MOVE,
-        SOUTH => self.player.pos.y += UNIT_MOVE,
-        EAST => self.player.pos.x += UNIT_MOVE
-      }
-    }
-    //TODO: Figure out what to do here 
     let size = self.window.settings.size();
     self.player.update(args.dt, size);
   }
 
   pub fn input(&mut self, button: &Button) {
     if let Button::Keyboard(key) = *button {
+      //Only need to update direction
       match key {
-        Key::Up => { 
-          self.player.pos.y -= UNIT_MOVE;
-          self.player.dir = NORTH;
-        },
-        Key::Down => {
-          self.player.pos.y += UNIT_MOVE;
-          self.player.dir = SOUTH;
-        },
-        Key::Left => {
-          self.player.pos.x -= UNIT_MOVE;
-          self.player.dir = WEST;
-        },
-        Key::Right => {
-          self.player.pos.x += UNIT_MOVE;
-          self.player.dir = EAST;
-        },
+        Key::Up => self.player.dir[0] = NORTH, 
+        Key::Down => self.player.dir[0] = SOUTH,
+        Key::Left => self.player.dir[0] = WEST,
+        Key::Right => self.player.dir[0] = EAST,
         _ => ()
       }
     }
