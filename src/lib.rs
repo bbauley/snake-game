@@ -56,10 +56,10 @@ impl App {
     if let Button::Keyboard(key) = *button {
       //Only need to update direction for head of snake
       match key {
-        Key::Up => self.player.dir[0] = NORTH, 
-        Key::Down => self.player.dir[0] = SOUTH,
-        Key::Left => self.player.dir[0] = WEST,
-        Key::Right => self.player.dir[0] = EAST,
+        Key::Up => self.player.dir = NORTH, 
+        Key::Down => self.player.dir = SOUTH,
+        Key::Left => self.player.dir = WEST,
+        Key::Right => self.player.dir = EAST,
         _ => ()
       }
     }

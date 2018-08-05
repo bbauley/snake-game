@@ -13,7 +13,7 @@ const UNIT_MOVE: f64 = 20.0;
 
 pub struct Player {
   pub pos: Vec<geom::Position>,
-  pub dir: Vec<Direction>,
+  pub dir: Direction,
   pub size: f64,
   pub length: usize
 }
@@ -21,18 +21,16 @@ pub struct Player {
 impl Player {
   pub fn new(x: f64, y: f64) -> Player {
     let mut v = Vec::new();
-    let mut d = Vec::new();
     let mut pos_y = y;
 
     for _ in 0..INITIAL_LENGTH {
       v.push(geom::Position::new(x, pos_y));
-      d.push(Direction::NORTH);
       pos_y -= PLAYER_SIZE;
     }
 
     return Player {
       pos: v,
-      dir: d,
+      dir: Direction::NORTH,
       size: PLAYER_SIZE,
       length: INITIAL_LENGTH
     }
@@ -47,7 +45,7 @@ impl GameObject for Player {
 
     for i in 0..self.length {
       let shape = rectangle::Rectangle::new_round(color::WHITE, self.radius());
-      let dir = match self.dir[i] {
+      let dir = match self.dir {
         Direction::WEST => 0.0,
         Direction::NORTH => 90.0,
         Direction::EAST => 180.0,
@@ -71,10 +69,9 @@ impl GameObject for Player {
   }
   fn update(&mut self, _dt: f64, _size: Size) {
     let mut hold_position = self.pos[0];
-    let mut hold_direction = self.dir[0];
 
     //Constant fast movement 
-    match self.dir[0] {
+    match self.dir {
       Direction::NORTH => self.pos[0].y -= UNIT_MOVE,
       Direction::WEST => self.pos[0].x -= UNIT_MOVE,
       Direction::SOUTH => self.pos[0].y += UNIT_MOVE,
@@ -84,11 +81,8 @@ impl GameObject for Player {
     //Update the rest of the snake
     for i in 1..self.length {
       let temp = self.pos[i];
-      let temp2 = self.dir[i];
       self.pos[i] = hold_position;
-      self.dir[i] = hold_direction;
       hold_position = temp;
-      hold_direction = temp2;
     }
   }
 }
