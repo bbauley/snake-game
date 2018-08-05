@@ -28,7 +28,7 @@ impl Player {
       pos_y -= PLAYER_SIZE;
     }
 
-    return Player {
+    Player {
       pos: v,
       dir: Direction::NORTH,
       size: PLAYER_SIZE,
