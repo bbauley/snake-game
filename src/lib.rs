@@ -14,7 +14,6 @@ use gfx::{ draw_text, draw_center };
 mod geom;
 use geom::Direction::*;
 mod color;
-//Everything in models directory
 mod models;
 use models::{ GameObject };
 use models::player::Player;
@@ -51,6 +50,7 @@ impl<'a> App<'a> {
 
     let player = Player::new(x, y);
     let fruit = Fruit::new(size.width, size.height);
+
     App {
       window: window, 
       player: player, 
@@ -96,13 +96,19 @@ impl<'a> App<'a> {
 
   pub fn update(&mut self, args: &UpdateArgs) {
     let size = self.window.settings.size();
+
     self.ticker = self.ticker - 1;
+    //Updating player in intervals
+    //Issues come up if I don't do this
     if self.ticker <= 0 {
       self.player.update(args.dt, size);
       self.ticker = 5;
     }  
     self.fruit.update(args.dt, size);
+
+    //Check if player collides with a fruit
     if self.player.collides(&self.fruit) {
+      
       let pos_x = self.player.pos[self.player.length - 1].x;
       let pos_y = self.player.pos[self.player.length - 1].y;
       match self.player.dir {
@@ -112,11 +118,21 @@ impl<'a> App<'a> {
         SOUTH => self.player.pos.push(geom::Position::new(pos_x, pos_y + self.player.size)),
       };
       self.player.length = self.player.length + 1;
-      self.fruit = Fruit::new(size.width, size.height);
+      self.fruit = Fruit::new(size.width - self.fruit.size as u32, 
+                              size.height - self.fruit.size as u32);
       self.score = self.score + 10;
       if self.score == 500 {
         self.status = GameStatus::Win;
       }
+    }
+    //Check if player hits a wall
+    if self.player.hits_wall(size.width, size.height) {
+      self.status = GameStatus::Died;
+    }
+
+    //Check if player collides with body
+    if self.player.hits_body() {
+      self.status = GameStatus::Died;
     }
   }
 

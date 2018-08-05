@@ -25,7 +25,7 @@ impl Player {
 
     for _ in 0..INITIAL_LENGTH {
       v.push(geom::Position::new(x, pos_y));
-      pos_y -= PLAYER_SIZE;
+      pos_y += PLAYER_SIZE;
     }
 
     Player {
@@ -34,6 +34,30 @@ impl Player {
       size: PLAYER_SIZE,
       length: INITIAL_LENGTH
     }
+  }
+
+  //Checks if the player hits a wall 
+  //given the width and height of the window size
+  pub fn hits_wall(&self, width: u32, height: u32) -> bool {
+    let position = self.position();
+    if (position.x < 0.0 || position.x > width.into()) ||
+       (position.y < 0.0 || position.y > height.into()) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  //Checks if the player hits his own snake body
+  pub fn hits_body(&self) -> bool {
+    let position = *self.position();
+    for i in 1..self.length {
+      if position == self.pos[i] {
+        return true;
+      }
+    }
+    return false;
   }
 }
 

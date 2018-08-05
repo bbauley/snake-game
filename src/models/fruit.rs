@@ -18,8 +18,8 @@ pub struct Fruit {
 impl Fruit {
     pub fn new(max_x: u32, max_y: u32) -> Fruit {
       let mut rng = rand::thread_rng();
-      let randx = rng.gen_range(0.0, max_x as f64);
-      let randy = rng.gen_range(0.0, max_y as f64);
+      let randx = rng.gen_range(FRUIT_SIZE, max_x as f64);
+      let randy = rng.gen_range(FRUIT_SIZE, max_y as f64);
       Fruit {pos: geom::Position {x: randx,y: randy}, size: FRUIT_SIZE, rotation: 0.0}
     }
 }
