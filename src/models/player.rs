@@ -1,4 +1,4 @@
-use graphics::{ Context, polygon, rectangle, Transformed };
+use graphics::{ Context, rectangle, Transformed };
 use opengl_graphics::GlGraphics;
 use piston::window::Size;
 
@@ -8,54 +8,81 @@ use geom::Direction;
 use super::GameObject; 
 
 const PLAYER_SIZE: f64 = 20.0;
+const INITIAL_LENGTH: usize = 5;
+const UNIT_MOVE: f64 = 20.0;
 
 pub struct Player {
-  pub pos: geom::Position,
+  pub pos: Vec<geom::Position>,
   pub dir: Direction,
-  pub size: f64
+  pub size: f64,
+  pub length: usize
 }
 
 impl Player {
   pub fn new(x: f64, y: f64) -> Player {
+    let mut v = Vec::new();
+    let mut pos_y = y;
+
+    for _ in 0..INITIAL_LENGTH {
+      v.push(geom::Position::new(x, pos_y));
+      pos_y -= PLAYER_SIZE;
+    }
+
     return Player {
-      pos: geom::Position::new(x, y),
+      pos: v,
       dir: Direction::NORTH,
-      size: PLAYER_SIZE
+      size: PLAYER_SIZE,
+      length: INITIAL_LENGTH
     }
   }
 }
 
 impl GameObject for Player {
-  fn position(&self) -> &geom::Position { &self.pos }
+  fn position(&self) -> &geom::Position { &self.pos[0] }
   fn radius(&self) -> f64 { self.size / 2.0 }
 
   fn render(&self, ctxt: &Context, gl: &mut GlGraphics) {
-    //TODO: Change this to be a ellipse
-    let shape = rectangle::Rectangle::new_round(color::WHITE, 10.0);
-    let dir = match self.dir {
-      Direction::WEST => 0.0,
-      Direction::NORTH => 90.0,
-      Direction::EAST => 180.0,
-      Direction::SOUTH => 270.0,
-    };
 
-    let radius = self.radius();
-    let transform = ctxt.transform
-      .trans(self.pos.x, self.pos.y)
-      .rot_deg(dir)
-      .trans(-self.size - radius, -self.size - radius);
-    let points = [self.size; 4];
+    for i in 0..self.length {
+      let shape = rectangle::Rectangle::new_round(color::WHITE, self.radius());
+      let dir = match self.dir {
+        Direction::WEST => 0.0,
+        Direction::NORTH => 90.0,
+        Direction::EAST => 180.0,
+        Direction::SOUTH => 270.0,
+      };
 
-    shape.draw(
-      points,
-      &ctxt.draw_state,
-      transform,
-      gl
-    ); 
+      let radius = self.radius();
+      let transform = ctxt.transform
+        .trans(self.pos[i].x, self.pos[i].y)
+        .rot_deg(dir)
+        .trans(-self.size - radius, -self.size - radius);
+      let points = [self.size; 4];
+
+      shape.draw(
+        points,
+        &ctxt.draw_state,
+        transform,
+        gl
+      ); 
+    }
   }
   fn update(&mut self, _dt: f64, _size: Size) {
-    //TODO: Figure out what to do here
-    //Maybe change design?
-  }
+    let mut hold_position = self.pos[0];
 
+    //Constant fast movement 
+    match self.dir {
+      Direction::NORTH => self.pos[0].y -= UNIT_MOVE,
+      Direction::WEST => self.pos[0].x -= UNIT_MOVE,
+      Direction::SOUTH => self.pos[0].y += UNIT_MOVE,
+      Direction::EAST => self.pos[0].x += UNIT_MOVE
+    }
+
+    //Update the rest of the snake
+    for i in 1..self.length {
+      let temp = self.pos[i];
+      self.pos[i] = hold_position;
+      hold_position = temp;
+    }
+  }
 }

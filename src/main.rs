@@ -6,7 +6,6 @@ extern crate snake;
 
 use piston::event_loop::*;
 use piston::input::*;
-
 use snake::App;
 use snake::config::GraphicsConfig;
 

@@ -1,3 +1,4 @@
+#[derive(Clone, Copy)]
 pub enum Direction {
     WEST,
     NORTH,
@@ -5,6 +6,7 @@ pub enum Direction {
     SOUTH
 }
 
+#[derive(Clone, Copy)]
 pub struct Position {
     pub x: f64,
     pub y: f64
