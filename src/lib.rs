@@ -6,8 +6,11 @@ extern crate rand;
 
 use piston::input::*;
 use piston::window::Window;
+use opengl_graphics::{GlyphCache, TextureSettings};
 
 pub mod config;
+mod gfx;
+use gfx::{ draw_text, draw_center };
 mod geom;
 use geom::Direction::*;
 mod color;
@@ -17,30 +20,74 @@ use models::{ GameObject };
 use models::player::Player;
 use models::fruit::Fruit;
 
-pub struct App {
+enum GameStatus {
+    // Normal mode
+    Normal,
+    // Player died
+    Died,
+    // Player won!
+    Win
+}
+
+pub struct App<'a> {
     pub window: config::GraphicsConfig,
     player: Player,
     fruit: Fruit,
+    glyph_cache: GlyphCache<'a>,
+    score: u64,
+    status: GameStatus,
     ticker: u64     //This variable acts as a timer on when to call the update function
 }
 
-impl App {
-  pub fn new(window: config::GraphicsConfig) -> App {
+impl<'a> App<'a> {
+  pub fn new(window: config::GraphicsConfig) -> App<'a> {
     let size = window.settings.size();
     let (x,y) = ((size.width / 2) as f64,
                  (size.height / 2) as f64);
 
+    // Load font(s) used in the game.
+    let glyph_cache = GlyphCache::new("../assets/fonts/PxPlus_IBM_VGA8.ttf", (), TextureSettings::new())
+      .expect("Unable to load font");
+
     let player = Player::new(x, y);
     let fruit = Fruit::new(size.width, size.height);
-    App {window: window, player: player, fruit: fruit, ticker: 5}
+    App {
+      window: window, 
+      player: player, 
+      fruit: fruit, 
+      glyph_cache: glyph_cache, 
+      score: 0, 
+      status: GameStatus::Normal,
+      ticker: 5
+    }
   }
   pub fn render(&mut self, args: &RenderArgs) {
     let player = &self.player;
     let fruit = &self.fruit;
+    let score = self.score;
+    let gc = &mut self.glyph_cache;
+    let status = &self.status;
+    let size = self.window.settings.size();
+
     self.window.gl.draw(args.viewport(), |c, gl| {
       use graphics::*;
       // Clear the screen.
       clear(::color::BLACK, gl);
+
+      match status {
+        GameStatus::Win => {
+          draw_center("YOU WIN!", 32, [size.width as f64, size.height as f64], gc, &c, gl);
+            return;
+        },
+        GameStatus::Died => {
+          draw_center("YOU DIED!", 32, [size.width as f64, size.height as f64], gc, &c, gl);
+            return;
+        },
+        _ => ()
+      }
+      // Render the current score
+      let score_str = format!("Score: {}", score);
+      draw_text(score_str.as_str(), [0.0, 16.0], 16, gc, &c, gl);
 
       player.render(&c, gl);
       fruit.render(&c, gl);
@@ -66,7 +113,10 @@ impl App {
       };
       self.player.length = self.player.length + 1;
       self.fruit = Fruit::new(size.width, size.height);
-      //Need to update score
+      self.score = self.score + 10;
+      if self.score == 500 {
+        self.status = GameStatus::Win;
+      }
     }
   }
 
