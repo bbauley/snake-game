@@ -9,7 +9,7 @@ use super::GameObject;
 
 const PLAYER_SIZE: f64 = 20.0;
 const INITIAL_LENGTH: usize = 5;
-const UNIT_MOVE: f64 = 1.0;
+const UNIT_MOVE: f64 = 20.0;
 
 pub struct Player {
   pub pos: Vec<geom::Position>,
@@ -70,7 +70,6 @@ impl GameObject for Player {
     }
   }
   fn update(&mut self, _dt: f64, _size: Size) {
-    //Need to draw out design on how the pieces of the snake will interact
     let mut hold_position = self.pos[0];
     let mut hold_direction = self.dir[0];
 
