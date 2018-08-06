@@ -35,3 +35,12 @@ pub trait GameObject {
     return r_start.powf(2.0) <= sum && sum <= r_end.powf(2.0);
   }
 }
+
+#[test]
+#[should_panic]
+fn test_collides() {
+  let fruit1 = fruit::Fruit::new(95, 95);
+  let player = player::Player::new(fruit1.pos.x + 5.0, fruit1.pos.y + 5.0);
+  assert!(player.collides(&fruit1) == true);
+  let _fruit2 = fruit::Fruit::new(1, 1);
+}

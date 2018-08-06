@@ -110,3 +110,37 @@ impl GameObject for Player {
     }
   }
 }
+
+#[test]
+fn test_player_new() {
+  let x_value = -100.0;
+  let y_value = -100.0;
+  let player = Player::new(x_value, y_value);
+  assert!(player.length == 5);
+  assert!(player.pos[0].x == x_value &&
+          player.pos[0].y == y_value);
+  assert!(player.pos.len() == 5);
+}
+
+#[test]
+fn test_hits_wall() {
+  let var = 200.0;
+  let player = Player::new(var + 1.0, var + 1.0);
+  let wall = (var, var);
+  assert!(player.hits_wall(wall.0 as u32, wall.1 as u32) == true);
+}
+
+#[test]
+fn test_hits_body() {
+  let var = 100.0;
+  let mut player = Player::new(var, var);
+  player.pos[0].y = player.pos[0].y + PLAYER_SIZE;
+  assert!(player.hits_body() == true);
+}
+
+#[test]
+fn test_pos_and_rad() {
+  let player = Player::new(100.0, 100.0);
+  assert!(*player.position() == geom::Position::new(player.pos[0].x, player.pos[0].y));
+  assert!(player.radius() == PLAYER_SIZE / 2.0);
+}

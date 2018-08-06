@@ -19,6 +19,10 @@ use models::{ GameObject };
 use models::player::Player;
 use models::fruit::Fruit;
 
+const RESET_VALUE: u64 = 5;
+const SCORE_INC: u64 = 10;
+const WINNING_SCORE: u64 = 500;
+
 enum GameStatus {
     // Normal mode
     Normal,
@@ -48,6 +52,7 @@ impl<'a> App<'a> {
     let glyph_cache = GlyphCache::new("../assets/fonts/PxPlus_IBM_VGA8.ttf", (), TextureSettings::new())
       .expect("Unable to load font");
 
+    assert!(x >= 0.0 && y >= 0.0);
     let player = Player::new(x, y);
     let fruit = Fruit::new(size.width, size.height);
 
@@ -58,7 +63,7 @@ impl<'a> App<'a> {
       glyph_cache: glyph_cache, 
       score: 0, 
       status: GameStatus::Normal,
-      ticker: 5
+      ticker: RESET_VALUE
     }
   }
   pub fn render(&mut self, args: &RenderArgs) {
@@ -102,7 +107,7 @@ impl<'a> App<'a> {
     //Issues come up if I don't do this
     if self.ticker <= 0 {
       self.player.update(args.dt, size);
-      self.ticker = 5;
+      self.ticker = RESET_VALUE;
     }  
     self.fruit.update(args.dt, size);
 
@@ -120,8 +125,8 @@ impl<'a> App<'a> {
       self.player.length = self.player.length + 1;
       self.fruit = Fruit::new(size.width - self.fruit.size as u32, 
                               size.height - self.fruit.size as u32);
-      self.score = self.score + 10;
-      if self.score == 500 {
+      self.score = self.score + SCORE_INC;
+      if self.score == WINNING_SCORE {
         self.status = GameStatus::Win;
       }
     }
@@ -149,3 +154,4 @@ impl<'a> App<'a> {
     }
   }
 }
+
