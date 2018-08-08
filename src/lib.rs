@@ -49,7 +49,7 @@ impl<'a> App<'a> {
                  (size.height / 2) as f64);
 
     // Load font(s) used in the game.
-    let glyph_cache = GlyphCache::new("../assets/fonts/PxPlus_IBM_VGA8.ttf", (), TextureSettings::new())
+    let glyph_cache = GlyphCache::new("./assets/fonts/PxPlus_IBM_VGA8.ttf", (), TextureSettings::new())
       .expect("Unable to load font");
 
     assert!(x >= 0.0 && y >= 0.0);
