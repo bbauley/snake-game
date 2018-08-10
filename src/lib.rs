@@ -23,6 +23,7 @@ const RESET_VALUE: u64 = 5;
 const SCORE_INC: u64 = 10;
 const WINNING_SCORE: u64 = 500;
 
+#[derive(PartialEq)]
 enum GameStatus {
     // Normal mode
     Normal,
@@ -131,12 +132,12 @@ impl<'a> App<'a> {
       }
     }
     //Check if player hits a wall
-    if self.player.hits_wall(size.width, size.height) {
+    if self.status != GameStatus::Win && self.player.hits_wall(size.width, size.height) {
       self.status = GameStatus::Died;
     }
 
     //Check if player collides with body
-    if self.player.hits_body() {
+    if self.status != GameStatus::Win && self.player.hits_body() {
       self.status = GameStatus::Died;
     }
   }
