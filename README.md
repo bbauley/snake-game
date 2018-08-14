@@ -1,5 +1,5 @@
 ## Snake
-A simple 2D snake game built for my CS 410P Rust Programming class. 
+A simple 2D snake game built for my CS 410P Rust Programming class. Link to writeup [here](https://github.com/bbauley/snake-game/wiki/Writeup).
 
 <img src="https://github.com/bbauley/snake-game/blob/master/assets/imgs/snake.gif" width="760" height="568" /> 
 
@@ -17,8 +17,6 @@ cargo run
 ```
 cargo test
 ```
-
-### [Writeup](https://github.com/bbauley/snake-game/wiki/Writeup)
 
 ### References
 - https://github.com/PistonDevelopers/Piston-Tutorials/tree/master/getting-started
